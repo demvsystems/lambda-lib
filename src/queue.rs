@@ -11,7 +11,7 @@ pub trait SerdeSerializedSend {
 }
 
 pub struct Queue {
-    client: SqsClient,
+    pub client: SqsClient,
 }
 
 impl Send for Queue {
