@@ -14,9 +14,16 @@ fn get_log_filter() -> log::LevelFilter {
 }
 
 #[cfg(feature = "sentry")]
-fn setup_sentry_log() {
+pub fn setup_sentry() -> sentry::internals::ClientInitGuard {
     use sentry::integrations::log;
     use sentry::integrations::log::LoggerOptions;
+    use std::env;
+
+    env::set_var("RUST_BACKTRACE", "1");
+    let dsn = env::var("SENTRY_DSN").expect("SENTRY_DSN ist nicht gesetzt");
+    let guard = sentry::init(dsn);
+
+    sentry::integrations::panic::register_panic_handler();
 
     let mut builder = env_logger::Builder::from_default_env();
     let logger = builder.build();
@@ -27,6 +34,8 @@ fn setup_sentry_log() {
             ..Default::default()
         },
     );
+
+    guard
 }
 
 pub fn setup() {
@@ -74,7 +83,4 @@ pub fn setup() {
             result
         })
         .init();
-
-    #[cfg(feature = "sentry")]
-    setup_sentry_log();
 }
