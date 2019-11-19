@@ -3,5 +3,7 @@ pub mod aws;
 pub mod gzip;
 #[cfg(feature = "sqs")]
 pub mod lambda;
+pub mod log;
 #[cfg(feature = "sqs")]
 pub mod queue;
+pub mod request;
