@@ -1,0 +1,42 @@
+name: Rust
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Load Cache
+      uses: actions/cache@v1
+      with:
+        path: cargo
+        key: ${{ runner.OS }}-build-${{ hashFiles('**/Cargo.lock') }}
+        restore-keys: |
+          ${{ runner.OS }}-build-${{ env.cache-name }}-
+          ${{ runner.OS }}-build-
+          ${{ runner.OS }}-
+
+
+    - name: Versionen
+      run: |
+        rustc -V
+        cargo --version
+
+    - name: Check Format
+      run: |
+        rustup component add rustfmt
+        cargo fmt -- --check
+
+    - name: Check Clippy
+      run: |
+        rustup component add clippy
+        cargo clippy --release --locked -- -D warnings
+
+    - name: Build
+      run: cargo check --locked
+    
+    - name: Run tests
+      run: cargo test -- --nocapture
