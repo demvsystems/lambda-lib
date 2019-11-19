@@ -6,8 +6,8 @@ pub trait Send {
 
 pub trait SerdeSerializedSend {
     fn send_serialized<T: ?Sized, S: Into<String>>(&self, value: &T, url: S) -> Result<(), String>
-        where
-            T: serde::Serialize + std::fmt::Debug;
+    where
+        T: serde::Serialize + std::fmt::Debug;
 }
 
 pub struct Queue {
@@ -35,8 +35,8 @@ impl Send for Queue {
 
 impl SerdeSerializedSend for Queue {
     fn send_serialized<T: ?Sized, S: Into<String>>(&self, value: &T, url: S) -> Result<(), String>
-        where
-            T: serde::Serialize + std::fmt::Debug,
+    where
+        T: serde::Serialize + std::fmt::Debug,
     {
         match serde_json::to_string(&value) {
             Ok(json) => self.send_message(json, url.into()),
