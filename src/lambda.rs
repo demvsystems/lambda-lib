@@ -1,10 +1,10 @@
+#[cfg(feature = "s3")]
+use crate::aws::s3::S3Bucket;
+#[cfg(feature = "s3")]
+use aws_lambda_events::event::s3::S3Event;
 #[cfg(feature = "sqs")]
 use aws_lambda_events::event::sqs::SqsEvent;
 use lambda_runtime::error::HandlerError;
-#[cfg(feature = "s3")]
-use aws_lambda_events::event::s3::S3Event;
-#[cfg(feature = "s3")]
-use crate::aws::s3::S3Bucket;
 
 #[cfg(feature = "sqs")]
 pub trait SqsHandle {
