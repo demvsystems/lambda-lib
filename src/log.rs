@@ -1,4 +1,3 @@
-#[cfg(feature = "sentry")]
 fn get_log_filter() -> log::LevelFilter {
     use std::env;
     match env::var("RUST_LOG")
@@ -24,16 +23,6 @@ pub fn setup_sentry() -> sentry::internals::ClientInitGuard {
     let guard = sentry::init(dsn);
 
     sentry::integrations::panic::register_panic_handler();
-
-    let mut builder = env_logger::Builder::from_default_env();
-    let logger = builder.build();
-    log::init(
-        Some(Box::new(logger)),
-        LoggerOptions {
-            filter: get_log_filter(),
-            ..Default::default()
-        },
-    );
 
     guard
 }
@@ -82,5 +71,7 @@ pub fn setup() {
 
             result
         })
+        .target(env_logger::Target::Stdout)
+        .filter(None, get_log_filter())
         .init();
 }
