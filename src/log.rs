@@ -1,4 +1,3 @@
-#[cfg(feature = "sentry")]
 fn get_log_filter() -> log::LevelFilter {
     use std::env;
     match env::var("RUST_LOG")
@@ -41,46 +40,31 @@ pub fn setup_sentry() -> sentry::internals::ClientInitGuard {
 pub fn setup() {
     #[cfg(feature = "transaction_id")]
     use crate::request::transaction;
+    use colored::*;
 
-    let mut builder = env_logger::Builder::from_default_env();
-    builder
-        .format(|buf, record| {
-            use env_logger::fmt::Color;
-            use std::io::Write;
-
-            let mut bold_red = buf.style();
-            bold_red.set_color(Color::Red).set_bold(true);
-
-            let mut bold_green = buf.style();
-            bold_green.set_color(Color::Green).set_bold(true);
-
-            let mut bold_blue = buf.style();
-            bold_blue.set_color(Color::Blue).set_bold(true);
-
-            let mut gray = buf.style();
-            gray.set_color(Color::Rgb(100, 100, 100));
-
+    fern::Dispatch::new()
+        // Perform allocation-free log formatting
+        .format(|out, message, record| {
             #[cfg(feature = "transaction_id")]
-            let result = writeln!(
-                buf,
+            out.finish(format_args!(
                 "Transaction-ID {} - {}[{}] {} {}",
-                bold_green.value(transaction::read_id()),
-                bold_blue.value(chrono::Local::now().format("[%d.%m.%Y][%H:%M:%S]")),
-                bold_red.value(record.level()),
-                record.args(),
-                gray.value(format!("(in {:?} @ {:?})", record.file(), record.line()))
-            );
+                transaction::read_id().green().bold(),
+                chrono::Local::now().format("[%d.%m.%Y][%H:%M:%S]").to_string().blue().bold(),
+                record.level().to_string().red().bold(),
+                message,
+                format!("(in {:?} @ {:?})", record.file(), record.line())
+            ));
             #[cfg(not(feature = "transaction_id"))]
-            let result = writeln!(
-                buf,
+                out.finish(format_args!(
                 "{}[{}] {} {}",
-                bold_blue.value(chrono::Local::now().format("[%d.%m.%Y][%H:%M:%S]")),
-                bold_red.value(record.level()),
-                record.args(),
-                gray.value(format!("(in {:?} @ {:?})", record.file(), record.line()))
-            );
-
-            result
+                chrono::Local::now().format("[%d.%m.%Y][%H:%M:%S]").to_string().blue().bold(),
+                record.level().to_string().red().bold(),
+                message,
+                format!("(in {:?} @ {:?})", record.file(), record.line())
+            ));
         })
-        .init();
+        .level(get_log_filter())
+        .chain(std::io::stdout())
+        .apply()
+        .expect("Fern konnte nicht initialisiert werden")
 }
