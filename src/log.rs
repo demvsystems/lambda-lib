@@ -49,15 +49,23 @@ pub fn setup() {
             out.finish(format_args!(
                 "Transaction-ID {} - {}[{}] {} {}",
                 transaction::read_id().green().bold(),
-                chrono::Local::now().format("[%d.%m.%Y][%H:%M:%S]").to_string().blue().bold(),
+                chrono::Local::now()
+                    .format("[%d.%m.%Y][%H:%M:%S]")
+                    .to_string()
+                    .blue()
+                    .bold(),
                 record.level().to_string().red().bold(),
                 message,
                 format!("(in {:?} @ {:?})", record.file(), record.line())
             ));
             #[cfg(not(feature = "transaction_id"))]
-                out.finish(format_args!(
+            out.finish(format_args!(
                 "{}[{}] {} {}",
-                chrono::Local::now().format("[%d.%m.%Y][%H:%M:%S]").to_string().blue().bold(),
+                chrono::Local::now()
+                    .format("[%d.%m.%Y][%H:%M:%S]")
+                    .to_string()
+                    .blue()
+                    .bold(),
                 record.level().to_string().red().bold(),
                 message,
                 format!("(in {:?} @ {:?})", record.file(), record.line())
@@ -65,6 +73,7 @@ pub fn setup() {
         })
         .level(get_log_filter())
         .chain(std::io::stdout())
+        .chain(std::io::stderr())
         .apply()
         .expect("Fern konnte nicht initialisiert werden")
 }
