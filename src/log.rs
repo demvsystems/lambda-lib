@@ -13,7 +13,7 @@ fn get_log_filter() -> log::LevelFilter {
 }
 
 #[cfg(feature = "sentry")]
-fn setup_sentry(logger: env_logger::Logger) -> sentry::internals::ClientInitGuard {
+pub fn setup_sentry() -> sentry::internals::ClientInitGuard {
     use sentry::integrations::log;
     use sentry::integrations::log::LoggerOptions;
     use std::env;
@@ -23,14 +23,6 @@ fn setup_sentry(logger: env_logger::Logger) -> sentry::internals::ClientInitGuar
     let guard = sentry::init(dsn);
 
     sentry::integrations::panic::register_panic_handler();
-
-    log::init(
-        Some(Box::new(logger)),
-        LoggerOptions {
-            filter: get_log_filter(),
-            ..Default::default()
-        },
-    );
 
     guard
 }
@@ -80,10 +72,6 @@ pub fn setup() {
             result
         })
         .target(env_logger::Target::Stdout)
-        .filter(None, get_log_filter());
-
-    #[cfg(feature = "sentry")]
-    setup_sentry(builder.build());
-    #[cfg(not(feature = "sentry"))]
-    builder.init();
+        .filter(None, get_log_filter())
+        .init();
 }
