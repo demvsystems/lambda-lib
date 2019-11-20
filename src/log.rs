@@ -13,7 +13,7 @@ fn get_log_filter() -> log::LevelFilter {
 }
 
 #[cfg(feature = "sentry")]
-pub fn setup_sentry() -> sentry::internals::ClientInitGuard {
+fn setup_sentry(logger: env_logger::Logger) -> sentry::internals::ClientInitGuard {
     use sentry::integrations::log;
     use sentry::integrations::log::LoggerOptions;
     use std::env;
@@ -24,8 +24,6 @@ pub fn setup_sentry() -> sentry::internals::ClientInitGuard {
 
     sentry::integrations::panic::register_panic_handler();
 
-    let mut builder = env_logger::Builder::from_default_env();
-    let logger = builder.build();
     log::init(
         Some(Box::new(logger)),
         LoggerOptions {
@@ -40,40 +38,52 @@ pub fn setup_sentry() -> sentry::internals::ClientInitGuard {
 pub fn setup() {
     #[cfg(feature = "transaction_id")]
     use crate::request::transaction;
-    use colored::*;
 
-    fern::Dispatch::new()
-        // Perform allocation-free log formatting
-        .format(|out, message, record| {
+    let mut builder = env_logger::Builder::from_default_env();
+    builder
+        .format(|buf, record| {
+            use env_logger::fmt::Color;
+            use std::io::Write;
+
+            let mut bold_red = buf.style();
+            bold_red.set_color(Color::Red).set_bold(true);
+
+            let mut bold_green = buf.style();
+            bold_green.set_color(Color::Green).set_bold(true);
+
+            let mut bold_blue = buf.style();
+            bold_blue.set_color(Color::Blue).set_bold(true);
+
+            let mut gray = buf.style();
+            gray.set_color(Color::Rgb(100, 100, 100));
+
             #[cfg(feature = "transaction_id")]
-            out.finish(format_args!(
+            let result = writeln!(
+                buf,
                 "Transaction-ID {} - {}[{}] {} {}",
-                transaction::read_id().green().bold(),
-                chrono::Local::now()
-                    .format("[%d.%m.%Y][%H:%M:%S]")
-                    .to_string()
-                    .blue()
-                    .bold(),
-                record.level().to_string().red().bold(),
-                message,
-                format!("(in {:?} @ {:?})", record.file(), record.line())
-            ));
+                bold_green.value(transaction::read_id()),
+                bold_blue.value(chrono::Local::now().format("[%d.%m.%Y][%H:%M:%S]")),
+                bold_red.value(record.level()),
+                record.args(),
+                gray.value(format!("(in {:?} @ {:?})", record.file(), record.line()))
+            );
             #[cfg(not(feature = "transaction_id"))]
-            out.finish(format_args!(
+            let result = writeln!(
+                buf,
                 "{}[{}] {} {}",
-                chrono::Local::now()
-                    .format("[%d.%m.%Y][%H:%M:%S]")
-                    .to_string()
-                    .blue()
-                    .bold(),
-                record.level().to_string().red().bold(),
-                message,
-                format!("(in {:?} @ {:?})", record.file(), record.line())
-            ));
+                bold_blue.value(chrono::Local::now().format("[%d.%m.%Y][%H:%M:%S]")),
+                bold_red.value(record.level()),
+                record.args(),
+                gray.value(format!("(in {:?} @ {:?})", record.file(), record.line()))
+            );
+
+            result
         })
-        .level(get_log_filter())
-        .chain(std::io::stdout())
-        .chain(std::io::stderr())
-        .apply()
-        .expect("Fern konnte nicht initialisiert werden")
+        .target(env_logger::Target::Stdout)
+        .filter(None, get_log_filter());
+
+    #[cfg(feature = "sentry")]
+    setup_sentry(builder.build());
+    #[cfg(not(feature = "sentry"))]
+    builder.init();
 }
