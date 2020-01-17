@@ -54,7 +54,7 @@ pub fn setup() {
                 buf,
                 "Transaction-ID {} - {}[{}] {} {}",
                 bold_green.value(transaction::read_id()),
-                bold_blue.value(chrono::Local::now().format("[%d.%m.%Y][%H:%M:%S]")),
+                bold_blue.value(chrono::Local::now().format("[%d.%m.%Y - %H:%M:%S]")),
                 bold_red.value(record.level()),
                 record.args(),
                 gray.value(format!("(in {:?} @ {:?})", record.file(), record.line()))
@@ -63,7 +63,7 @@ pub fn setup() {
             let result = writeln!(
                 buf,
                 "{}[{}] {} {}",
-                bold_blue.value(chrono::Local::now().format("[%d.%m.%Y][%H:%M:%S]")),
+                bold_blue.value(chrono::Local::now().format("[%d.%m.%Y - %H:%M:%S]")),
                 bold_red.value(record.level()),
                 record.args(),
                 gray.value(format!("(in {:?} @ {:?})", record.file(), record.line()))
