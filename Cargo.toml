@@ -18,6 +18,7 @@ log = "0.4.8"
 env_logger = "0.7.1"
 chrono = "0.4.10"
 sentry = { version = "0.17.0", optional = true }
+chrono-tz = "0.5.1"
 
 [features]
 sqs = []

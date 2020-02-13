@@ -1,3 +1,5 @@
+use chrono::Local;
+
 fn get_log_filter() -> log::LevelFilter {
     use std::env;
     match env::var("RUST_LOG")
@@ -34,6 +36,8 @@ pub fn setup() {
     let mut builder = env_logger::Builder::from_default_env();
     builder
         .format(|buf, record| {
+            use chrono::TimeZone;
+            use chrono_tz::Europe::Berlin;
             use env_logger::fmt::Color;
             use std::io::Write;
 
@@ -49,12 +53,17 @@ pub fn setup() {
             let mut gray = buf.style();
             gray.set_color(Color::Rgb(100, 100, 100));
 
+            let timestamp = Berlin
+                .from_local_datetime(&Local::now().naive_local())
+                .single()
+                .expect("Unexpected Date");
+
             #[cfg(feature = "transaction_id")]
             let result = writeln!(
                 buf,
                 "Transaction-ID {} - {}[{}] {} {}",
                 bold_green.value(transaction::read_id()),
-                bold_blue.value(chrono::Local::now().format("[%d.%m.%Y - %H:%M:%S]")),
+                bold_blue.value(timestamp.format("[%d.%m.%Y - %H:%M:%S]")),
                 bold_red.value(record.level()),
                 record.args(),
                 gray.value(format!("(in {:?} @ {:?})", record.file(), record.line()))
@@ -63,7 +72,7 @@ pub fn setup() {
             let result = writeln!(
                 buf,
                 "{}[{}] {} {}",
-                bold_blue.value(chrono::Local::now().format("[%d.%m.%Y - %H:%M:%S]")),
+                bold_blue.value(timestamp.format("[%d.%m.%Y - %H:%M:%S]")),
                 bold_red.value(record.level()),
                 record.args(),
                 gray.value(format!("(in {:?} @ {:?})", record.file(), record.line()))
