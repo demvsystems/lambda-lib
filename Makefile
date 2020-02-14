@@ -14,10 +14,6 @@ test:
 	cd ../$(UPLOAD_LAMBDA) && make test
 	cd ../$(UUID_LAMBDA) && make test
 	cd ../$(IR_LAMBDA) && make test
-local:
-	cd ../$(UPLOAD_LAMBDA) && make local
-	cd ../$(UUID_LAMBDA) && make local
-	cd ../$(IR_LAMBDA) && make local
 aws:
 	cd ../$(UPLOAD_LAMBDA) && make aws
 	cd ../$(UUID_LAMBDA) && make aws
