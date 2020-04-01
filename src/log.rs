@@ -16,8 +16,6 @@ fn get_log_filter() -> log::LevelFilter {
 
 #[cfg(feature = "sentry")]
 pub fn setup_sentry() -> sentry::internals::ClientInitGuard {
-    use sentry::integrations::log;
-    use sentry::integrations::log::LoggerOptions;
     use std::env;
 
     env::set_var("RUST_BACKTRACE", "1");
