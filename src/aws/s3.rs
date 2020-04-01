@@ -22,9 +22,9 @@ impl S3Bucket {
     }
 
     pub fn read_from(&self, client: &rusoto_s3::S3Client) -> Result<String, String> {
+        use futures::executor::block_on;
         use rusoto_s3::S3;
         use std::io::Read;
-        use futures::executor::block_on;
 
         let mut request = rusoto_s3::GetObjectRequest::default();
         request.key = self.object_key.to_owned();
@@ -54,8 +54,8 @@ impl S3Bucket {
     }
 
     pub fn delete_from(&self, client: &rusoto_s3::S3Client) -> bool {
-        use rusoto_s3::S3;
         use futures::executor::block_on;
+        use rusoto_s3::S3;
 
         let mut request = rusoto_s3::DeleteObjectRequest::default();
         request.key = self.object_key.to_owned();
