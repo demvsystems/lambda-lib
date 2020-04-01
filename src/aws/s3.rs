@@ -24,12 +24,13 @@ impl S3Bucket {
     pub fn read_from(&self, client: &rusoto_s3::S3Client) -> Result<String, String> {
         use rusoto_s3::S3;
         use std::io::Read;
+        use futures::executor::block_on;
 
         let mut request = rusoto_s3::GetObjectRequest::default();
         request.key = self.object_key.to_owned();
         request.bucket = self.name.to_owned();
 
-        match client.get_object(request).sync() {
+        match block_on(client.get_object(request)) {
             Ok(output) => {
                 if let Some(body) = output.body {
                     let mut buf = Vec::new();
@@ -54,11 +55,12 @@ impl S3Bucket {
 
     pub fn delete_from(&self, client: &rusoto_s3::S3Client) -> bool {
         use rusoto_s3::S3;
+        use futures::executor::block_on;
 
         let mut request = rusoto_s3::DeleteObjectRequest::default();
         request.key = self.object_key.to_owned();
         request.bucket = self.name.to_owned();
 
-        client.delete_object(request).sync().is_ok()
+        block_on(client.delete_object(request)).is_ok()
     }
 }

@@ -17,13 +17,14 @@ pub struct Queue {
 impl Send for Queue {
     fn send_message<S: Into<String>>(&self, message: S, url: S) -> Result<(), String> {
         use rusoto_sqs::{SendMessageRequest, Sqs};
+        use futures::executor::block_on;
 
         let mut req = SendMessageRequest::default();
         req.message_body = message.into();
         req.queue_url = url.into();
 
         let future = self.client.send_message(req);
-        match future.sync() {
+        match block_on(future) {
             Ok(_) => Ok(()),
             Err(e) => Err(format!(
                 "Die Nachricht konnte nicht synchronisiert werden: {:?}",
