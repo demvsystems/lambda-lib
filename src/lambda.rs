@@ -4,7 +4,9 @@ use crate::aws::s3::S3Bucket;
 use aws_lambda_events::event::s3::S3Event;
 #[cfg(feature = "sqs")]
 use aws_lambda_events::event::sqs::SqsEvent;
-use lambda_runtime::error::HandlerError;
+use std::error::Error;
+
+type HandlerError = Box<dyn Error + Send + Sync + 'static>;
 
 #[cfg(feature = "sqs")]
 pub trait SqsHandle {
