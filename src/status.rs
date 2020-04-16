@@ -2,7 +2,7 @@ use crate::queue::{Queue, SerdeSerializedSend};
 use chrono::Local;
 use serde::{Deserialize, Serialize};
 
-const DATE_FORMAT: &str = "%Y.%m.%d %H:%M:%S";
+const DATE_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
 
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub enum Origin {
