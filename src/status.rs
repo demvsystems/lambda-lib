@@ -21,8 +21,8 @@ pub enum State {
 
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Attributes {
-    pub process_id: String,
-    pub transaction_id: Option<String>,
+    pub transaction_id: String,
+    pub process_id: Option<String>,
     pub uuid: Option<String>,
 }
 
@@ -36,7 +36,7 @@ pub struct Status {
 }
 
 impl Status {
-    pub fn new<S: Into<String>>(origin: Origin, state: State, process_id: S) -> Self {
+    pub fn new(origin: Origin, state: State) -> Self {
         use chrono::offset::TimeZone;
         use chrono_tz::Europe::Berlin;
 
@@ -49,8 +49,8 @@ impl Status {
             origin,
             state,
             attributes: Attributes {
-                process_id: process_id.into(),
-                transaction_id: Some(crate::request::transaction::read_id()),
+                transaction_id: crate::request::transaction::read_id(),
+                process_id: None,
                 uuid: None,
             },
             created_at: berlin.format(DATE_FORMAT).to_string(),
@@ -58,16 +58,16 @@ impl Status {
         }
     }
 
-    pub fn from_upload_lambda<S: Into<String>>(state: State, process_id: S) -> Self {
-        Self::new(Origin::Upload, state, process_id)
+    pub fn from_upload_lambda(state: State) -> Self {
+        Self::new(Origin::Upload, state)
     }
 
-    pub fn from_uuid_lambda<S: Into<String>>(state: State, process_id: S) -> Self {
-        Self::new(Origin::Uuid, state, process_id)
+    pub fn from_uuid_lambda(state: State) -> Self {
+        Self::new(Origin::Uuid, state)
     }
 
-    pub fn from_ir_lambda<S: Into<String>>(state: State, process_id: S) -> Self {
-        Self::new(Origin::IR, state, process_id)
+    pub fn from_ir_lambda(state: State) -> Self {
+        Self::new(Origin::IR, state)
     }
 
     pub fn with_message<S: Into<String>>(&mut self, message: S) -> &mut Self {
@@ -76,8 +76,21 @@ impl Status {
         self
     }
 
+    pub fn with_process_id<S: Into<String>>(&mut self, process_id: S) -> &mut Self {
+        self.attributes.process_id = Some(process_id.into());
+
+        self
+    }
+
     pub fn with_uuid<S: Into<String>>(&mut self, uuid: S) -> &mut Self {
         self.attributes.uuid = Some(uuid.into());
+
+        self
+    }
+
+    pub fn with_transaction_id(&mut self, transaction_id: Option<String>) -> &mut Self {
+        self.attributes.transaction_id =
+            transaction_id.unwrap_or_else(|| crate::request::transaction::read_id());
 
         self
     }
@@ -98,11 +111,11 @@ mod tests {
     fn it_serialize() {
         use serde_json;
 
-        let status = super::Status::from_ir_lambda(super::State::InProgress, "abcdef#42");
+        let mut status = super::Status::from_ir_lambda(super::State::InProgress);
+        status.with_process_id("abcdef#42");
+        assert_eq!(Some("abcdef#42"), status.attributes.process_id.as_deref());
         let json = status.as_json();
-        assert_eq!(
-            status,
-            serde_json::from_str(&json).expect("Could not deserialize")
-        );
+        let result: super::Status = serde_json::from_str(&json).expect("Could not deserialize");
+        assert_eq!(status, result);
     }
 }
