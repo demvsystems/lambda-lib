@@ -21,8 +21,7 @@ impl S3Bucket {
         }
     }
 
-    pub fn read_from(&self, client: &rusoto_s3::S3Client) -> Result<String, String> {
-        use futures::executor::block_on;
+    pub async fn read_from(&self, client: &rusoto_s3::S3Client) -> Result<String, String> {
         use rusoto_s3::S3;
         use std::io::Read;
 
@@ -30,7 +29,7 @@ impl S3Bucket {
         request.key = self.object_key.to_owned();
         request.bucket = self.name.to_owned();
 
-        match block_on(client.get_object(request)) {
+        match client.get_object(request).await {
             Ok(output) => {
                 if let Some(body) = output.body {
                     let mut buf = Vec::new();
@@ -53,14 +52,13 @@ impl S3Bucket {
         }
     }
 
-    pub fn delete_from(&self, client: &rusoto_s3::S3Client) -> bool {
-        use futures::executor::block_on;
+    pub async fn delete_from(&self, client: &rusoto_s3::S3Client) -> bool {
         use rusoto_s3::S3;
 
         let mut request = rusoto_s3::DeleteObjectRequest::default();
         request.key = self.object_key.to_owned();
         request.bucket = self.name.to_owned();
 
-        block_on(client.delete_object(request)).is_ok()
+        client.delete_object(request).await.is_ok()
     }
 }
