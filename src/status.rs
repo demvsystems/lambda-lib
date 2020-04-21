@@ -11,9 +11,13 @@ pub enum Origin {
 
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub enum State {
+    #[serde(rename = "Gestartet")]
     Started,
+    #[serde(rename = "In Bearbeitung")]
     InProgress,
+    #[serde(rename = "Erfolgreich beendet")]
     Ok,
+    #[serde(rename = "Fehlerhaft beendet")]
     Fail,
 }
 
