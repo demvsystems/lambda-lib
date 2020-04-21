@@ -1,4 +1,3 @@
-use crate::queue::{Queue, SerdeSerializedSend};
 use chrono::Local;
 use serde::{Deserialize, Serialize};
 
@@ -97,11 +96,6 @@ impl Status {
 
     pub fn as_json(&self) -> String {
         serde_json::to_string(self).expect("Could not serialize Status")
-    }
-
-    pub fn send_to<S: Into<String>>(&self, url: S, queue: &Queue) -> Result<(), String> {
-        let json = self.as_json();
-        queue.send_serialized(&json, url)
     }
 }
 
