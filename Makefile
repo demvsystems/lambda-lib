@@ -4,6 +4,8 @@ IR_LAMBDA = vertragsservice-ir-lambda
 
 build:
 	cargo build --features "sqs s3 gzip sentry_log transaction_id"
+test:
+	cargo test --features "sqs s3 gzip sentry_log transaction_id"
 update_all:
 	cargo update
 	cd ../$(UPLOAD_LAMBDA) && cargo update
