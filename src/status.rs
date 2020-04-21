@@ -1,4 +1,3 @@
-use chrono::Local;
 use serde::{Deserialize, Serialize};
 
 const DATE_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
@@ -36,13 +35,10 @@ pub struct Status {
 
 impl Status {
     pub fn new(origin: Origin, state: State) -> Self {
-        use chrono::offset::TimeZone;
+        use chrono::Utc;
         use chrono_tz::Europe::Berlin;
 
-        let berlin = Berlin
-            .from_local_datetime(&Local::now().naive_local())
-            .single()
-            .expect("Unexpected Date");
+        let dt = Utc::now().with_timezone(&Berlin);
 
         Self {
             origin,
@@ -52,7 +48,7 @@ impl Status {
                 process_id: None,
                 uuid: None,
             },
-            created_at: berlin.format(DATE_FORMAT).to_string(),
+            created_at: dt.format(DATE_FORMAT).to_string(),
             message: None,
         }
     }
