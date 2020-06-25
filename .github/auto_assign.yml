@@ -1,0 +1,11 @@
+addReviewers: true
+
+reviewers:
+  - UncleSven
+  - christianhaberland
+  - Dgame
+
+skipKeywords:
+  - wip
+
+numberOfReviewers: 0
