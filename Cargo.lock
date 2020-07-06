@@ -212,9 +212,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.0.56"
+version = "1.0.57"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "77c1f1d60091c1b73e2b1f4560ab419204b178e625fa945ded7b660becd2bd46"
+checksum = "0fde55d2a2bfaa4c9668bbc63f531fbdeee3ffe188f4662511ce2c22b3eedebe"
 
 [[package]]
 name = "cfg-if"
@@ -732,9 +732,9 @@ dependencies = [
 
 [[package]]
 name = "hermit-abi"
-version = "0.1.14"
+version = "0.1.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b9586eedd4ce6b3c498bc3b4dd92fc9f11166aa908a914071953768066c67909"
+checksum = "3deed196b6e7f9e44a2ae8d94225d80302d81208b1bb673fd21fe634645c85a9"
 dependencies = [
  "libc",
 ]
@@ -986,7 +986,7 @@ dependencies = [
 [[package]]
 name = "lambda"
 version = "0.1.0"
-source = "git+https://github.com/awslabs/aws-lambda-rust-runtime#ed3fd167528125b73ce47abfadc38cd274bf59bc"
+source = "git+https://github.com/awslabs/aws-lambda-rust-runtime#c8dbcd39e0b1cf9ecf395e2b2f9df6c6c0d97780"
 dependencies = [
  "bytes 0.5.5",
  "futures 0.3.5",
@@ -1006,7 +1006,7 @@ dependencies = [
 [[package]]
 name = "lambda-attributes"
 version = "0.1.0"
-source = "git+https://github.com/awslabs/aws-lambda-rust-runtime#ed3fd167528125b73ce47abfadc38cd274bf59bc"
+source = "git+https://github.com/awslabs/aws-lambda-rust-runtime#c8dbcd39e0b1cf9ecf395e2b2f9df6c6c0d97780"
 dependencies = [
  "proc-macro2 0.4.30",
  "quote",
@@ -1118,9 +1118,9 @@ checksum = "3728d817d99e5ac407411fa471ff9800a778d88a24685968b36824eaf4bee400"
 
 [[package]]
 name = "memoffset"
-version = "0.5.4"
+version = "0.5.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b4fc2c02a7e374099d4ee95a193111f72d2110197fe200272371758f6c3643d8"
+checksum = "c198b026e1bbf08a937e94c6c60f9ec4a2267f5b0d2eec9c1b21b061ce2be55f"
 dependencies = [
  "autocfg",
 ]
@@ -1180,9 +1180,9 @@ dependencies = [
 
 [[package]]
 name = "mio-named-pipes"
-version = "0.1.6"
+version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f5e374eff525ce1c5b7687c4cef63943e7686524a387933ad27ca7ec43779cb3"
+checksum = "0840c1c50fd55e521b247f949c241c9997709f23bd7f023b9762cd561e935656"
 dependencies = [
  "log",
  "mio",
@@ -2379,9 +2379,9 @@ dependencies = [
 
 [[package]]
 name = "tokio-uds"
-version = "0.2.6"
+version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5076db410d6fdc6523df7595447629099a1fdc47b3d9f896220780fa48faf798"
+checksum = "ab57a4ac4111c8c9dbcf70779f6fc8bc35ae4b2454809febac840ad19bd7e4e0"
 dependencies = [
  "bytes 0.4.12",
  "futures 0.1.29",
@@ -2468,9 +2468,9 @@ dependencies = [
 
 [[package]]
 name = "tracing-subscriber"
-version = "0.2.6"
+version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "04a11b459109e38ff6e1b580bafef4142a11d44889f5d07424cbce2fd2a2a119"
+checksum = "c72c8cf3ec4ed69fef614d011a5ae4274537a8a8c59133558029bd731eb71659"
 dependencies = [
  "sharded-slab",
  "tracing-core",
