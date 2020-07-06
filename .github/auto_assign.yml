@@ -1,9 +1,11 @@
 addReviewers: true
 
 reviewers:
-  - UncleSven
   - christianhaberland
   - Dgame
+  - DavidVaness
+  - k0pernikus
+  - UncleSven
 
 skipKeywords:
   - wip
