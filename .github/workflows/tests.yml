@@ -20,9 +20,6 @@ jobs:
         uses: styfle/cancel-workflow-action@0.4.0
         with:
           ACCESS_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
-      - uses: fusion-engineering/setup-git-credentials@v2
-        with:
-          credentials: ${{ secrets.GIT_CREDENTIALS }}
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
