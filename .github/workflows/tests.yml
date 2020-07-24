@@ -30,6 +30,13 @@ jobs:
           toolchain: stable
           override: true
           components: rustfmt, clippy
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: cargo check
         uses: actions-rs/cargo@v1
         with:
