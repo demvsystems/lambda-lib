@@ -21,7 +21,7 @@ jobs:
         uses: styfle/cancel-workflow-action@0.4.0
         with:
           ACCESS_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -40,7 +40,7 @@ jobs:
         uses: styfle/cancel-workflow-action@0.4.0
         with:
           ACCESS_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -57,7 +57,7 @@ jobs:
         uses: styfle/cancel-workflow-action@0.4.0
         with:
           ACCESS_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
@@ -78,7 +78,7 @@ jobs:
         uses: styfle/cancel-workflow-action@0.4.0
         with:
           ACCESS_TOKEN:  ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
