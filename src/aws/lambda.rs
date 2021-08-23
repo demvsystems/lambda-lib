@@ -5,38 +5,41 @@ use aws_lambda_events::event::s3::S3Event;
 #[cfg(feature = "sqs")]
 use aws_lambda_events::event::sqs::SqsEvent;
 use std::error::Error;
+use async_trait::async_trait;
 
 type HandlerError = Box<dyn Error + Send + Sync + 'static>;
 
 #[cfg(feature = "sqs")]
+#[async_trait]
 pub trait SqsHandle {
-    fn handle_sqs_event(&self, event: SqsEvent) -> Result<(), HandlerError> {
+    async fn handle_sqs_event(&self, event: SqsEvent) -> Result<(), HandlerError> {
         log::info!("Eingehendes SQS-Event: {:?}", &event);
         for record in event.records {
             if let Some(body) = record.body {
-                self.handle_sqs_record(&body);
+                self.handle_sqs_record(&body).await;
             }
         }
 
         Ok(())
     }
 
-    fn handle_sqs_record(&self, body: &str);
+    async fn handle_sqs_record(&self, body: &str);
 }
 
 #[cfg(feature = "s3")]
+#[async_trait]
 pub trait S3Handle {
-    fn handle_s3_event(&self, event: S3Event) -> Result<(), HandlerError> {
+    async fn handle_s3_event(&self, event: S3Event) -> Result<(), HandlerError> {
         log::info!("Eingehendes S3-Event: {:?}", &event);
         for record in event.records {
             match S3Bucket::from_record(&record) {
                 Err(e) => log::error!("Fehler beim umwandeln des S3-Buckets: {:?}", e),
-                Ok(s3_bucket) => self.handle_s3_record(s3_bucket),
+                Ok(s3_bucket) => self.handle_s3_record(s3_bucket).await,
             }
         }
 
         Ok(())
     }
 
-    fn handle_s3_record(&self, bucket: S3Bucket);
+    async fn handle_s3_record(&self, bucket: S3Bucket);
 }

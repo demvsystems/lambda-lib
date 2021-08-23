@@ -1,15 +1,5 @@
 use rusoto_sqs::SqsClient;
 
-// pub trait Send {
-//     fn send_message<S: Into<String>>(&self, message: S, url: S) -> Result<(), String>;
-// }
-
-// pub trait SerdeSerializedSend {
-//     fn send_serialized<T: ?Sized, S: Into<String>>(&self, value: &T, url: S) -> Result<(), String>
-//     where
-//         T: serde::Serialize + std::fmt::Debug;
-// }
-
 pub struct Queue {
     pub client: SqsClient,
 }
@@ -22,14 +12,13 @@ impl Queue {
         req.message_body = message.into();
         req.queue_url = url.into();
 
-        let future = self.client.send_message(req);
-        match future.await {
+        match self.client.send_message(req).await {
             Ok(_) => Ok(()),
             Err(e) => Err(format!("Die Nachricht konnte nicht synchronisiert werden: {:?}", e)),
         }
     }
 
-    async fn send_serialized<T: ?Sized, S: Into<String>>(&self, value: &T, url: S) -> Result<(), String>
+    pub async fn send_serialized<T: ?Sized, S: Into<String>>(&self, value: &T, url: S) -> Result<(), String>
         where
             T: serde::Serialize + std::fmt::Debug,
     {
